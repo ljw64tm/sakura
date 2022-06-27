@@ -10,12 +10,12 @@ spring:
     url: jdbc:mysql://localhost:3306/sakura?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8&useSSL=false
     username: root
     password: 123456
-  resources:
-    static-locations: classpath:/resources/
-  thymeleaf:
-    prefix: classpath:/templates/
-  mvc:
-    static-path-pattern: /static/**
+#  resources:
+#    static-locations: classpath:/resources/
+#  thymeleaf:
+#    prefix: classpath:/templates/
+#  mvc:
+#    static-path-pattern: /static/**
 mybaits:
   #mapper-locations:  com.example.dao.mapper.*.xml
   type-aliases-package: com.example.dao.entity

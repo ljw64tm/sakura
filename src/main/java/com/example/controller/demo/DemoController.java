@@ -24,11 +24,6 @@ public class DemoController {
         response.sendRedirect("/static/index.html");
     }
 
-    @RequestMapping("/h")
-    public String index2(HttpServletResponse response) throws IOException {
-        return "index";
-    }
-
     @GetMapping("/testdb")
     @ResponseBody
     public String testdb(HttpServletResponse response) throws IOException {

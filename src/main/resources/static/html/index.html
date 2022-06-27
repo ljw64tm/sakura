@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+        <title>站点开发中...</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!--        <link rel="stylesheet" href="css/bootstrap.min.css">-->
+
+        <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+              integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu"
+              crossorigin="anonymous">
+
+        <style type="text/css">
+            body {
+                padding-top: 70px;
+            }
+        </style>
+        <script src="js/jquery.js"></script>
+        <script src="js/bootstrap.js"></script>
+        <script src="js/angular.min.js"></script>
+        <script src="js/angular-route.min.js"></script>
+        <script>
+            $(function () {
+                // alert(encodeURIComponent("1 2"));
+                // alert(encodeURIComponent("1[]2"));
+                //关闭时移除播放器
+                $("#videoModal").on('hidden.bs.modal', function (e) {
+                    // alert(123);
+                    $("#mediaPlayerArea").html("");
+                })
+            });
+
+            function changeState(doc) {
+                $("td").removeClass("info");
+                $(doc).addClass("info");
+            }
+
+            angular.module('myApp', ['ngRoute']).controller('homeCtrl', function ($scope, $http) {
+
+            }).controller('animationCtrl', function ($scope, $http) {
+                //搜索框输入
+                $scope.searchValue = "";
+                //搜索
+                $scope.chosedRootUrl = "";
+                //root目录
+                $scope.rootFileIndex = [];
+                //子目录
+                $scope.subFileIndex = [];
+                //标签修改专用
+                $scope.tagPanal = {
+                    animationId: 0,
+                    animationName: ""
+                };
+                //所有标签 修改标签专用
+                $scope.allTags = [];
+                //当前动画所有标签 修改标签专用
+                $scope.thisTags = [];
+                //强力搜索
+                $scope.search = function () {
+                    $http.get("/file/search?keyword=" + $scope.searchValue).then(function (result) {
+                        $scope.rootFileIndex = result.data.data;
+                    });
+                };
+                //加载标签
+                $scope.loadTag = function (index) {
+                    if (index > $scope.rootFileIndex.length - 1) {
+                        return;
+                    }
+                    $http.get("/tag/getByAnimationId?animationId=" + $scope.rootFileIndex[index].id).then(function (result) {
+                        $scope.rootFileIndex[index].tags = result.data.data;
+                        index++;
+                        $scope.loadTag(index);//此处不可把index++写在括号内
+                    });
+                };
+                $scope.getSub = function (name) {
+                    $scope.chosedRootUrl = name;
+                    $http.get("/file/index?subIndex=" + name).then(function (result) {
+                        $scope.subFileIndex = result.data.data;
+                    });
+                };
+                $scope.addTag = function (animationId, animationName) {
+                    $scope.tagPanal = {
+                        animationId: animationId,
+                        animationName: animationName
+                    };
+                    //获取所有标签
+                    $http.get("/tag/getAll").then(function (result) {
+                        $scope.allTags = result.data.data;
+                    });
+                    //再次获取当前动画已有标签
+                    $http.get("/tag/getByAnimationId?animationId=" + animationId).then(function (result) {
+                        $scope.thisTags = result.data.data;
+                    });
+                    $('#tagAddModal').modal('show')
+                };
+                //增加标签确认
+                $scope.addTagConfirm = function (tagId) {
+                    let data = {
+                        animationId: $scope.tagPanal.animationId,
+                        tagId: tagId
+                    };
+                    $http.post('/tag/add', data).then(function () {
+                        //重新加载
+                        $scope.addTag($scope.tagPanal.animationId, $scope.tagPanal.animationName);
+                    });
+                };
+                //删除标签确认
+                $scope.delTagConfirm = function (tagId) {
+                    let data = {
+                        animationId: $scope.tagPanal.animationId,
+                        tagId: tagId
+                    };
+                    $http.post('/tag/delete', data).then(function () {
+                        //重新加载
+                        $scope.addTag($scope.tagPanal.animationId, $scope.tagPanal.animationName);
+                    });
+                };
+                //关闭标签操作对话
+                $scope.closeAdd = function () {
+                    $('#tagAddModal').modal('hide');
+                    //重新加载标签
+                    $scope.loadTag(0)
+                };
+                $scope.download = function (name) {
+                    $("#downloadForm input[name=index]").val($scope.chosedRootUrl);
+                    $("#downloadForm input[name=subIndex]").val(name);
+                    $("#downloadForm").submit();
+                };
+                $scope.play = function (name) {
+                    var url = "/file/download?index=" + $scope.chosedRootUrl + "&subIndex=" + name;
+                    $("#mediaPlayerArea").html("<video id='mediaPlayer' controls><source src='" + url + "'>您的浏览器不支持Video标签。</video>");
+                    //展示播放器区域
+                    $("#videoModal").modal('show');
+                    //自动播放
+                    document.getElementById("mediaPlayer").play();
+                    //关闭时移除播放器
+                    $("#videoModal").on('hidden.bs.modal', function (e) {
+                        $("#mediaPlayerArea").html("");
+                    });
+                    //提示框
+                    $("#videoAlert").show().fadeOut(3000);
+                };
+                $scope.testVideo = function () {
+                    //加载视频
+                    var url =  "/file/download?index=000&subIndex=1.mp4";
+                    $("#mediaPlayerArea").html("<video id='mediaPlayer' controls><source src='" + url + "'>您的浏览器不支持Video标签。</video>");
+                    //展示播放器区域
+                    $("#videoModal").modal('show');
+                    //自动播放
+                    document.getElementById("mediaPlayer").play();
+                    //关闭时移除播放器
+                    $("#videoModal").on('hidden.bs.modal', function (e) {
+                        $("#mediaPlayerArea").html("");
+                    });
+                    //提示框
+                    $("#videoAlert").show().fadeOut(3000);
+                };
+            }).controller('maintainCtrl', function ($scope, $http) {
+                //磁盘到数据库
+                $scope.disk2db = function () {
+                    $http.get("/sync/disk2db").then(function (result) {
+                        $('#maintainModal').modal('show')
+                    });
+                };
+                //数据库到磁盘
+                $scope.db2disk = function () {
+                    $http.get("/sync/db2disk").then(function (result) {
+                        $('#maintainModal').modal('show')
+                    });
+                };
+            }).config(function ($routeProvider) {
+                $routeProvider.when('/home', {
+                    templateUrl: 'html/home.html',
+                    controller: 'homeCtrl'
+                }).when('/animation', {
+                    templateUrl: 'html/animation.html',
+                    controller: 'animationCtrl'
+                }).when('/maintain', {
+                    templateUrl: 'html/maintain.html',
+                    controller: 'maintainCtrl'
+                }).when('/quick_angular', {
+                    templateUrl: 'html/quick/angular.html',
+                    controller: 'animationCtrl'
+                }).when('/quick_jquery', {
+                    templateUrl: 'html/quick/jquery.html',
+                    controller: 'animationCtrl'
+                }).when('/quick_bootstrap', {
+                    templateUrl: 'html/quick/bootstrap.html',
+                    controller: 'animationCtrl'
+                }).when('/quick_java', {
+                    templateUrl: 'html/quick/java.html',
+                    controller: 'animationCtrl'
+                }).when('/quick_spring', {
+                    templateUrl: 'html/quick/spring.html',
+                    controller: 'animationCtrl'
+                }).when('/quick_spring_mvc', {
+                    templateUrl: 'html/quick/spring_mvc.html',
+                    controller: 'animationCtrl'
+                }).when('/quick_spring_boot', {
+                    templateUrl: 'html/quick/spring_boot.html',
+                    controller: 'animationCtrl'
+                }).when('/quick_mysql', {
+                    templateUrl: 'html/quick/mysql.html',
+                    controller: 'animationCtrl'
+                }).when('/quick_redis', {
+                    templateUrl: 'html/quick/redis.html',
+                    controller: 'animationCtrl'
+                }).when('/quick_eureka', {
+                    templateUrl: 'html/quick/eureka.html',
+                    controller: 'animationCtrl'
+                }).when('/quick_zookeeper', {
+                    templateUrl: 'html/quick/zookeeper.html',
+                    controller: 'animationCtrl'
+                }).when('/quick_idea', {
+                    templateUrl: 'html/quick/idea.html',
+                    controller: 'animationCtrl'
+                }).otherwise({
+                    redirectTo: '/home'
+                });
+            });
+        </script>
+    </head>
+    <body ng-app="myApp">
+        <nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                            data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand active" href="#!/home">首页</a>
+                </div>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li><a href="#!/animation">找资源<span class="sr-only">(current)</span></a></li>
+                        <li><a href="#!/maintain">内部功能</a></li>
+                        <li class="dropdown">
+                            <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                               aria-haspopup="true" aria-expanded="false">快速建站<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#!/quick_angular">Angular</a></li>
+                                <li><a href="#!/quick_jquery">Jquery</a></li>
+                                <li><a href="#!/quick_bootstrap">Bootstrap</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#!/quick_java">Java</a></li>
+                                <li><a href="#!/quick_spring">Spring</a></li>
+                                <li><a href="#!/quick_spring_mvc">Spring-MVC</a></li>
+                                <li><a href="#!/quick_spring_boot">Spring-Boot</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#!/quick_mysql">Mysql</a></li>
+                                <li><a href="#!/quick_redis">Redis</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#!/quick_eureka">Eureka</a></li>
+                                <li><a href="#!/quick_zookeeper">Zookeeper</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#!/quick_idea">Idea</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#">支持</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div ng-view="" class="container-fluid">
+        </div>
+    </body>
+</html>

@@ -1,0 +1,108 @@
+<div ng-controller="animationCtrl">
+    <form id="downloadForm" style="display: none;" method="get" target="_blank" action="/file/download">
+        <input type="hidden" name="index" value=""/>
+        <input type="hidden" name="subIndex" value=""/>
+    </form>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" id="exampleInputName2" ng-model="searchValue"
+                           ng-change="search()" ng-blur="loadTag(0)" placeholder="请在此键入搜索关键字"/>
+                </div>
+                <div class="col-sm-4"></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <button class="btn btn-primary" ng-click="testVideo()">观看测试视频</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6 table-responsive" style="height:600px;overflow:auto;">
+                    <table class="table table-hover table-condensed">
+                        <tr>
+                            <td class="col-sm-8">结果</td>
+                            <td class="col-sm-4">标签</td>
+                        </tr>
+                        <tr ng-repeat="x in rootFileIndex">
+                            <td ng-click="getSub(x.fullName)" onclick="changeState(this)">{{ x.name }}</td>
+                            <td>
+                                <button type="button" ng-repeat="y in x.tags" class="btn btn-primary btn-xs">{{ y.name }}
+                                </button>
+                                <button type="button" class="btn btn-success btn-xs" ng-click="addTag(x.id)">
+                                    <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+                                </button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-sm-6 table-responsive" style="height: 600px;overflow:auto;">
+                    <table class="table table-hover table-condensed">
+                        <tr>
+                            <td class="col-sm-9">文件名</td>
+                            <td class="col-sm-2">是否文件</td>
+                            <td class="col-sm-2">大小</td>
+                        </tr>
+                        <tr ng-repeat="x in subFileIndex">
+                            <td class="col-sm-9">{{ x.name }}</td>
+                            <td class="col-sm-2">{{ x.file }}
+                                <button type="button" class="btn btn-xs btn-success" ng-if="x.file" ng-click="download(x.name)">
+                                    <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="btn btn-xs btn-success" ng-if="x.file" ng-click="play(x.name)">
+                                    <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+                                </button>
+                            </td>
+                            <td class="col-sm-2">{{ x.size }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--tag添加/删除框-->
+    <div class="modal fade" id="tagAddModal" tabindex="-1" role="dialog" aria-labelledby="tagAddModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="tagAddModalLabel">标签操作</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        所有标签，单击以添加
+                    </div>
+                    <div class="row">
+                        <button type="button" class="btn btn-success" ng-repeat="x in allTags" ng-click="addTagConfirm(x.id)">{{ x.name }}</button>
+                    </div>
+                    <div class="row">
+                        当前标签，单击以删除
+                    </div>
+                    <div class="row">
+                        <button type="button" class="btn btn-success" ng-repeat="x in thisTags"  ng-click="delTagConfirm(x.id)">{{ x.name }}</button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" ng-click="closeAdd()">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--播放器-->
+    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="videoModal"
+         data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document" style="width:95%;">
+            <div class="modal-content">
+                <div class="embed-responsive embed-responsive-16by9" id="mediaPlayerArea">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-info" role="alert" id="videoAlert"
+         style="position:absolute;top:50%;left:50%;height:50px;width:400px;margin-top:-100px;margin-left:-200px;display:none;z-index:10000;">
+        按ESC退出播放器
+    </div>
+</div>

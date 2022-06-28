@@ -130,12 +130,10 @@
                     $("#downloadForm").submit();
                 };
                 $scope.play = function (name) {
-                    var url = "/base_animation_url/" + $scope.chosedRootUrl + "/" + name;
-                    $("#mediaPlayerArea").html("<video id='mediaPlayer' controls><source src='" + url + "'>您的浏览器不支持Video标签。</video>");
+                    var url = "/file/download?index=" + $scope.chosedRootUrl + "&subIndex=" + name;
+                    $("#mediaPlayerArea").html("<video id='mediaPlayer' autoplay controls><source src='" + url + "'>您的浏览器不支持Video标签。</video>");
                     //展示播放器区域
                     $("#videoModal").modal('show');
-                    //自动播放
-                    document.getElementById("mediaPlayer").play();
                     //关闭时移除播放器
                     $("#videoModal").on('hidden.bs.modal', function (e) {
                         $("#mediaPlayerArea").html("");
@@ -145,12 +143,10 @@
                 };
                 $scope.testVideo = function () {
                     //加载视频
-                    var url =  "/base_animation_url/000/2.mkv";
-                    $("#mediaPlayerArea").html("<video id='mediaPlayer' controls><source src='" + url + "'>您的浏览器不支持Video标签。</video>");
+                    var url = "/file/download?index=000&subIndex=2.mkv";
+                    $("#mediaPlayerArea").html("<video id='mediaPlayer' autoplay controls><source src='" + url + "'>您的浏览器不支持Video标签。</video>");
                     //展示播放器区域
                     $("#videoModal").modal('show');
-                    //自动播放
-                    document.getElementById("mediaPlayer").play();
                     //关闭时移除播放器
                     $("#videoModal").on('hidden.bs.modal', function (e) {
                         $("#mediaPlayerArea").html("");

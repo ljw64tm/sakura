@@ -10,6 +10,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
-        registry.addResourceHandler("/base_animation_url/**").addResourceLocations("file:Z:/所有归档动画/");
+        //registry.addResourceHandler("/base_animation_url/**").addResourceLocations("file:Z:/所有归档动画/");
     }
 }

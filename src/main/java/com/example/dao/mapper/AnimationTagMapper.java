@@ -17,6 +17,6 @@ public interface AnimationTagMapper {
     @Delete("delete from animation_tag where animation_id=#{animationId} and tag_id=#{tagId}")
     int delete(@Param("animationId") Integer animationId, @Param("tagId") Integer tagId);
 
-    @Select("select t.id as id,t.name as name from animation_tag as at inner join tag as t on at.tag_id=t.id where animation_id=#{animationId}")
+    @Select("select t.id as id,t.name as name,t.type as type from animation_tag as at inner join tag as t on at.tag_id=t.id where animation_id=#{animationId}")
     List<TagEntity> getByAnimationId(Integer animationId);
 }

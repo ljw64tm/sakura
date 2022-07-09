@@ -1,5 +1,11 @@
 package com.example.common.enums;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public enum YesNoEnum {
 
     YES(1, "是"),
@@ -9,16 +15,4 @@ public enum YesNoEnum {
     private Integer value;
     private String description;
 
-    YesNoEnum(Integer value, String description) {
-        this.value = value;
-        this.description = description;
-    }
-
-    public Integer getValue() {
-        return value;
-    }
-
-    public String getDescription() {
-        return description;
-    }
 }

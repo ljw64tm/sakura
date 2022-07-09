@@ -22,7 +22,7 @@ public class TagController {
      * @return
      */
     @GetMapping("/getAll")
-    public Resp<List<TagVo>> getAll() {
+    public Resp<List<List<TagVo>>> getAll() {
         return Resp.success(tagService.getAllTags());
     }
 

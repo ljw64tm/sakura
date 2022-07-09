@@ -10,5 +10,6 @@ public class TagEntity {
 
     private Integer id;
     private String name;
-
+    private Integer type;
+    private Integer sort;
 }

@@ -9,7 +9,7 @@ import java.util.List;
 @Mapper
 public interface TagMapper {
 
-    @Select("select * from tag")
+    @Select("select * from tag order by sort")
     List<TagEntity> getAll();
 
 }

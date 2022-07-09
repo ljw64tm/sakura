@@ -21,11 +21,23 @@ public class TagService {
     @Autowired
     private AnimationTagMapper animationTagMapper;
 
-    public List<TagVo> getAllTags() {
-        List<TagVo> result = new ArrayList<>();
+    public List<List<TagVo>> getAllTags() {
+        List<List<TagVo>> result = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            result.add(new ArrayList<>());
+        }
         List<TagEntity> tagEntityList = tagMapper.getAll();
         for (TagEntity entity : tagEntityList) {
-            result.add(new TagVo(entity.getId(), entity.getName()));
+            List<TagVo> temp = result.get(entity.getType());
+            temp.add(new TagVo(entity.getId(), entity.getName(), entity.getType()));
+            result.set(entity.getType(), temp);
+        }
+        for (int i = 0, j = result.size(); i < j; i++) {
+            if (result.get(i).isEmpty()) {
+                result.remove(i);
+                j--;
+                i--;
+            }
         }
         return result;
     }
@@ -48,7 +60,7 @@ public class TagService {
         List<TagVo> result = new ArrayList<>();
         List<TagEntity> tagEntityList = animationTagMapper.getByAnimationId(animationId);
         for (TagEntity entity : tagEntityList) {
-            result.add(new TagVo(entity.getId(), entity.getName()));
+            result.add(new TagVo(entity.getId(), entity.getName(), entity.getType()));
         }
         return result;
     }

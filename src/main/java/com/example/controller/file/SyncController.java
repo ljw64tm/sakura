@@ -24,8 +24,12 @@ public class SyncController {
      */
     @GetMapping("/disk2db")
     public Resp disk2db() {
-        syncService.disk2db();
-        return Resp.success();
+        String err = syncService.disk2db();
+        if (err == null) {
+            return Resp.success();
+        } else {
+            return Resp.fail(err);
+        }
     }
 
     /**
@@ -35,7 +39,11 @@ public class SyncController {
      */
     @GetMapping("/db2disk")
     public Resp db2disk() {
-        syncService.db2disk();
-        return Resp.success();
+        String err = syncService.db2disk();
+        if (err == null) {
+            return Resp.success();
+        } else {
+            return Resp.fail(err);
+        }
     }
 }

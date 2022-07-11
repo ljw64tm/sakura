@@ -40,7 +40,8 @@ public class SyncService {
                 AnimationEntity animationEntity = animationMapper.getByName(finalName);
                 if (animationEntity == null) {
                     //没有，新增
-                    animationMapper.insert(finalName, this.toPinyin(finalName),fileResVo.getName(), new Date());
+                    String py = this.namePYHandler(this.toPinyin(finalName));
+                    animationMapper.insert(finalName, py, fileResVo.getName(), new Date());
                     log.info("磁盘到数据库同步，已添加：" + fileResVo.getName());
                     continue;
                 }
@@ -53,7 +54,7 @@ public class SyncService {
                 log.info(fileResVo.getName() + "已过滤，跳过流程，请参见过滤器");
             }
         }
-        return "123";
+        return null;
     }
 
     /**
@@ -85,6 +86,17 @@ public class SyncService {
     }
 
     /**
+     * 自定义拼音名称处理器
+     *
+     * @param name
+     * @return
+     */
+    private String namePYHandler(String name) {
+        name = name.replaceAll("u:", "v");
+        return name.toLowerCase();
+    }
+
+    /**
      * 反向同步，数据库中存在，硬盘已不存在，将会删除数据库中信息
      *
      * @return
@@ -103,7 +115,7 @@ public class SyncService {
             animationMapper.updateStatusById(animationEntity.getId(), YesNoEnum.YES.getValue(), new Date());
             log.info("数据库到磁盘同步，已删除：" + animationEntity.getName());
         }
-        return "123";
+        return null;
     }
 
     private String toPinyin(String chinese) {
@@ -120,7 +132,6 @@ public class SyncService {
                     if (pinyinResult != null && pinyinResult.length > 0) {
                         temp = pinyinResult[0];
                     }
-                    temp.replace("u:", "v");
                     pinyinBuilder.append(temp);
                 } catch (BadHanyuPinyinOutputFormatCombination badHanyuPinyinOutputFormatCombination) {
                     log.error("拼音转化错误", badHanyuPinyinOutputFormatCombination);

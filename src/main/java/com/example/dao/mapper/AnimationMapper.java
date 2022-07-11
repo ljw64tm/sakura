@@ -1,6 +1,7 @@
 package com.example.dao.mapper;
 
 import com.example.dao.entity.AnimationEntity;
+import com.example.model.file.SearchDto;
 import org.apache.ibatis.annotations.*;
 
 import java.util.Date;
@@ -19,14 +20,18 @@ public interface AnimationMapper {
     List<AnimationEntity> getAll();
 
     @Insert("insert into animation(name,name_pinyin,full_name,create_time,modify_time) values(#{name},#{namePinyin},#{fullName},#{time},#{time})")
-    int insert(@Param("name") String name, @Param("namePinyin") String namePinyin,@Param("fullName") String fullName, @Param("time") Date time);
+    int insert(@Param("name") String name, @Param("namePinyin") String namePinyin, @Param("fullName") String fullName, @Param("time") Date time);
 
     @Update("update animation set `delete` = #{delete},delete_time=#{time} where id = #{id}")
     int updateStatusById(@Param("id") Integer id, @Param("delete") Integer delete, @Param("time") Date time);
 
-    @Select("select id,name,name_pinyin as `namePinyin`,full_name as `fullName`,`delete`,delete_time as `deleteTime`,create_time as `createTime`,modify_time as `modifyTime` from animation where name like #{keyword,jdbcType=VARCHAR} and `delete`=0 limit 20")
-    List<AnimationEntity> searchByName(@Param("keyword") String keyword);
+    @Select("<script>SELECT id,name,name_pinyin AS `namePinyin`,full_name AS `fullName`,`delete`,delete_time AS `deleteTime`,create_time AS `createTime`,modify_time AS `modifyTime` " +
+            "FROM animation " +
+            "WHERE (name LIKE #{keyword,jdbcType=VARCHAR} OR name_pinyin LIKE #{keyword,jdbcType=VARCHAR}) " +
+            "AND `delete`=0 " +
+            "<if test='animationIds!=null'>AND id IN <foreach collection='animationIds' index='index' item='item' open='(' separator=',' close=')'>#{item}</foreach></if> " +
+            "ORDER BY id ASC "+
+            "LIMIT #{pageStart},#{pageSize}</script>")
+    List<AnimationEntity> searchByName(SearchDto searchDto);
 
-    @Select("select id,name,name_pinyin as `namePinyin`,full_name as `fullName`,`delete`,delete_time as `deleteTime`,create_time as `createTime`,modify_time as `modifyTime` from animation where name_pinyin like #{keyword,jdbcType=VARCHAR} and `delete`=0 limit 20")
-    List<AnimationEntity> searchByNamePinYin(@Param("keyword") String keyword);
 }

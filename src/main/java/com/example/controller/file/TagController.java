@@ -7,11 +7,14 @@ import com.example.service.file.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/tag")
 public class TagController {
+
 
     @Autowired
     private TagService tagService;
@@ -51,5 +54,4 @@ public class TagController {
         tagService.delete(form.getAnimationId(), form.getTagId());
         return Resp.success();
     }
-    //查询
 }

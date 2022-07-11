@@ -2,11 +2,10 @@ package com.example.controller.file;
 
 import com.example.model.file.FileResVo;
 import com.example.model.file.Resp;
+import com.example.model.file.SearchForm;
 import com.example.service.file.FileService;
 import com.example.service.file.SearchService;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/file")
 public class FileController {
@@ -29,19 +28,23 @@ public class FileController {
     @Autowired
     private SearchService searchService;
 
-    private static final Logger log = LoggerFactory.getLogger(FileController.class);
-
     @GetMapping("/index")
     private Resp<List<FileResVo>> index(@RequestParam(required = false, defaultValue = "") String subIndex) {
         return Resp.success(fileService.index(subIndex));
     }
 
     @GetMapping("/search")
-    private Resp<List<FileResVo>> search(@RequestParam(required = false, defaultValue = "") String keyword) {
-        if (StringUtils.isBlank(keyword)) {
-            return Resp.success(new ArrayList<>());
+    private Resp<List<FileResVo>> search(SearchForm searchForm) {
+        if (searchForm.getKeyword() == null) {
+            searchForm.setKeyword("");
         }
-        return Resp.success(searchService.search(keyword));
+        if (searchForm.getPageNum() == null) {
+            searchForm.setPageNum(0);
+        }
+        if (searchForm.getPageSize() == null) {
+            searchForm.setPageSize(10);
+        }
+        return Resp.success(searchService.search(searchForm));
     }
 
     @GetMapping("/download")

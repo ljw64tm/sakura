@@ -1,12 +1,4 @@
 <style type="text/css">
-    .result-block {
-        height: 300px;
-    }
-
-    .result-img {
-        height: 200px;
-    }
-
     .result-title {
         overflow: auto;
         height: 22px;
@@ -29,30 +21,53 @@
         </div>
         <div class="col-sm-4">
             <input type="text" class="form-control input-lg" id="exampleInputName2" ng-model="searchValue"
-                   ng-change="search()" ng-blur="loadTag(0)" ng-focus="closeDetail()" placeholder="请在此键入搜索关键字"/>
+                   ng-change="search()" ng-focus="closeDetail()" placeholder="请在此键入搜索关键字"/>
         </div>
-        <div class="col-sm-4"></div>
+        <div class="col-sm-4">
+            <button class="btn btn-lg btn-info" ng-click="openTagSelect()" title="标签选择">
+                <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+            </button>
+            <button class="btn btn-lg btn-danger" ng-click="clearTagCheck()" ng-disabled="!tagAreaOpen"
+                    title="清除所有标签选择">
+                <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>
+                <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+            </button>
+        </div>
+    </div>
+    <div class="row" ng-class="{'hidden':tagAreaOpen!=true}">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <p ng-repeat="x in allTags">
+                    <button type="button" class="btn" ng-repeat="y in x" ng-click="tagCheck(y.id)"
+                            ng-class="{'active':y.active==true,'btn-primary':y.type==1,'btn-success':y.type==2,'btn-info':y.type==3,'btn-warning':y.type==4,'btn-danger':y.type>=5}">
+                        {{ y.name }}
+                        <input type="checkbox" ng-checked="y.active==true"/>
+                    </button>
+                </p>
+            </div>
+        </div>
     </div>
     <div class="row">
         <p>&nbsp;</p>
-        <p>&nbsp;</p>
     </div>
     <div class="row">
-        <div class="col-xs-12" id="result-area">
+        <div ng-class="{'col-xs-6 col-md-8':detailAreaOpen==true,'col-xs-12':detailAreaOpen==false}">
             <div class="row">
-                <div class="col-lg-2 col-md-2 col-sm-3 col-xs-6 result-block" ng-repeat="x in rootFileIndex"
-                     ng-click="getDetail(x)">
+                <div ng-repeat="x in rootFileIndex" ng-click="getDetail(x)"
+                     ng-class="{'col-lg-3 col-md-3 col-sm-4 col-xs-12':detailAreaOpen==true,'col-lg-2 col-md-2 col-sm-3 col-xs-6':detailAreaOpen==false}">
                     <div class="thumbnail">
                         <img src="/static/img/1.jpg" class="img-responsive img-rounded"
                              alt="暂无封面">
                         <div class="caption">
                             <p class="result-title">{{ x.name }}</p>
                             <p class="result-tag">
-                                <button type="button" ng-repeat="y in x.tags" class="btn btn-primary btn-xs">{{ y.name
-                                    }}
+                                <button type="button" ng-repeat="y in x.tags" class="btn btn-xs"
+                                        ng-class="{'btn-primary':y.type==1,'btn-success':y.type==2,'btn-info':y.type==3,'btn-warning':y.type==4,'btn-danger':y.type>=5}">
+                                    {{ y.name }}
                                 </button>
-                                <button type="button" class="btn btn-success btn-xs" ng-click="addTag(x.id)">
-                                    <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>临时占位
+                                <button type="button" class="btn btn-default btn-xs"
+                                        ng-if="x.tags==null||x.tags.length==0">
+                                    暂无标签
                                 </button>
                             </p>
                         </div>
@@ -60,7 +75,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xs-4 hidden" id="detail-area">
+        <div class="col-xs-6 col-md-4" ng-class="{'hidden':detailAreaOpen==false}">
             <div class="row">
                 <div class="col-xs-9">
                     <P class="lead">{{checkedNode.name}}</P>
@@ -71,13 +86,25 @@
                     </button>
                 </div>
             </div>
-            <p>
-                <button type="button" ng-repeat="y in checkedNode.tags" class="btn btn-primary btn-xs">{{ y.name }}
-                </button>
-                <button type="button" class="btn btn-success btn-xs" ng-click="addTag(checkedNode.id)">
-                    <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
-                </button>
-            </p>
+            <div class="row">
+                <div class="col-md-6">
+                    <p>
+                        <button type="button" ng-repeat="y in checkedNode.tags" class="btn btn-xs"
+                                ng-class="{'btn-primary':y.type==1,'btn-success':y.type==2,'btn-info':y.type==3,'btn-warning':y.type==4,'btn-danger':y.type>=5}">
+                            {{ y.name }}
+                        </button>
+                        <button type="button" class="btn btn-default btn-xs"
+                                ng-if="checkedNode.tags==null||checkedNode.tags.length==0">
+                            暂无标签
+                        </button>
+                        <button type="button" class="btn btn-success btn-xs" ng-click="addTag(checkedNode.id)">
+                            <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+                        </button>
+                    </p>
+                </div>
+                <div class="col-md-6"><img src="/static/img/1.jpg" class="img-responsive img-rounded"
+                                           alt="暂无封面"></div>
+            </div>
             <div class="row table-responsive" style="max-height: 600px;overflow:auto;">
                 <table class="table table-hover table-condensed">
                     <tr>
@@ -127,6 +154,10 @@
                         <button type="button" class="btn" ng-repeat="x in thisTags" ng-click="delTagConfirm(x.id)"
                                 ng-class="{'btn-primary':x.type==1,'btn-success':x.type==2,'btn-info':x.type==3,'btn-warning':x.type==4,'btn-danger':x.type>=5}">
                             {{ x.name }}
+                        </button>
+                        <button type="button" class="btn btn-default"
+                                ng-if="thisTags==null||thisTags.length==0">
+                            暂无
                         </button>
                     </p>
                 </div>

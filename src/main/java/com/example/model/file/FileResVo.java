@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -27,6 +29,8 @@ public class FileResVo implements Comparable {
     private boolean file;
 
     private String size;
+
+    private List<TagVo> tags;
 
     public FileResVo(String name, boolean isFile) {
         this.name = name;

@@ -16,6 +16,9 @@ public interface AnimationMapper {
     @Select("select id,name,name_pinyin as `namePinyin`,`delete`,delete_time as `deleteTime`,create_time as `createTime`,modify_time as `modifyTime` from animation where name=#{name} limit 1")
     AnimationEntity getByName(@Param("name") String name);
 
+    @Select("select id,name,name_pinyin as `namePinyin`,`delete`,delete_time as `deleteTime`,create_time as `createTime`,modify_time as `modifyTime` from animation where id=#{id} limit 1")
+    AnimationEntity getById(@Param("id") Integer id);
+
     @Select("select id,name,name_pinyin as `namePinyin`,`delete`,delete_time as `deleteTime`,create_time as `createTime`,modify_time as `modifyTime` from animation")
     List<AnimationEntity> getAll();
 
@@ -30,7 +33,7 @@ public interface AnimationMapper {
             "WHERE (name LIKE #{keyword,jdbcType=VARCHAR} OR name_pinyin LIKE #{keyword,jdbcType=VARCHAR}) " +
             "AND `delete`=0 " +
             "<if test='animationIds!=null'>AND id IN <foreach collection='animationIds' index='index' item='item' open='(' separator=',' close=')'>#{item}</foreach></if> " +
-            "ORDER BY id ASC "+
+            "ORDER BY id ASC " +
             "LIMIT #{pageStart},#{pageSize}</script>")
     List<AnimationEntity> searchByName(SearchDto searchDto);
 

@@ -26,15 +26,9 @@
             $(function () {
                 //关闭时移除播放器
                 $("#videoModal").on('hidden.bs.modal', function (e) {
-                    // alert(123);
                     $("#mediaPlayerArea").html("");
-                })
+                });
             });
-
-            function changeState(doc) {
-                $("td").removeClass("info");
-                $(doc).addClass("info");
-            }
 
             angular.module('myApp', ['ngRoute']).controller('homeCtrl', function ($scope, $http) {
 
@@ -67,6 +61,8 @@
                 $scope.tagAreaOpen = false;
                 //是否打开详情区
                 $scope.detailAreaOpen = false;
+                //图片版本，重刷图片使用
+                $scope.picVersion = 0;
                 //数据加载初始化------------------------------------------------------------------
                 //获取所有标签
                 $http.get("/tag/getAll").then(function (result) {
@@ -180,7 +176,43 @@
                     $('#tagAddModal').modal('hide');
                     //重新加载
                     $scope.searchDataBuild();
-                    $scope.checkedNode.tags =  $scope.thisTags;
+                    $scope.checkedNode.tags = $scope.thisTags;
+                };
+                //单击图片时触发选择图片
+                $scope.choosePic = function () {
+                    $("#picUploadForm").children("[name='photo']").change(function () {
+                        var obj = $("#picUploadForm").children("[name='photo']")[0].files[0];
+                        var tempUrl = window.URL.createObjectURL(obj);
+                        $("#targetPic").attr("src", tempUrl);
+                        $('#picUploadModal').modal('show');
+                    });
+                    $("#picUploadForm").children("[name='photo']").click();
+                };
+                //上传图片前确认
+                $scope.uploadPicConfirm = function () {
+                    $('#picUploadModal').modal('show');
+                };
+                //上传图片
+                $scope.submitPic = function () {
+                    var formData = new FormData($("#picUploadForm")[0]);
+                    $.ajax({
+                        type: "POST",
+                        data: formData,
+                        url: "/file/uploadPic",
+                        headers:{"Connection":'close'},
+                        contentType: false,
+                        processData: false,
+                    }).success(function (data) {
+                        $scope.closePicUpload();
+                        $('#animationInfoModal').modal('show');
+                        $scope.picVersion++;
+                    }).error(function (data) {
+                        alert("操作失败！");
+                    });
+                };
+                //关闭标签操作对话
+                $scope.closePicUpload = function () {
+                    $('#picUploadModal').modal('hide');
                 };
                 $scope.download = function (name) {
                     $("#downloadForm input[name=index]").val($scope.chosedRootUrl);

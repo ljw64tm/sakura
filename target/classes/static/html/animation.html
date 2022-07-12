@@ -6,8 +6,13 @@
 
     .result-tag {
         overflow: auto;
-        height: 22px;
+        height: 24px;
     }
+
+    .result-img {
+
+    }
+
 </style>
 <div ng-controller="animationCtrl">
     <form id="downloadForm" style="display: none;" method="get" target="_blank" action="/file/download">
@@ -56,10 +61,12 @@
                 <div ng-repeat="x in rootFileIndex" ng-click="getDetail(x)"
                      ng-class="{'col-lg-3 col-md-3 col-sm-4 col-xs-12':detailAreaOpen==true,'col-lg-2 col-md-2 col-sm-3 col-xs-6':detailAreaOpen==false}">
                     <div class="thumbnail">
-                        <img src="/static/img/1.jpg" class="img-responsive img-rounded"
-                             alt="暂无封面">
+                        <div class="result-img">
+                            <img src="{{'/file/downloadPic/'+x.id+'?v='+picVersion}}"
+                                 class="img-responsive img-rounded center-block"/>
+                        </div>
                         <div class="caption">
-                            <p class="result-title">{{ x.name }}</p>
+                            <p class="result-title">{{x.name}}</p>
                             <p class="result-tag">
                                 <button type="button" ng-repeat="y in x.tags" class="btn btn-xs"
                                         ng-class="{'btn-primary':y.type==1,'btn-success':y.type==2,'btn-info':y.type==3,'btn-warning':y.type==4,'btn-danger':y.type>=5}">
@@ -100,10 +107,15 @@
                         <button type="button" class="btn btn-success btn-xs" ng-click="addTag(checkedNode.id)">
                             <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
                         </button>
+                    <form action="/file/uploadPic" method="post" enctype="multipart/form-data" id="picUploadForm">
+                        <input type="text" name="id" ng-model="checkedNode.id" class="hidden"/>
+                        <input type="file" name="photo" accept="image/gif,image/jpeg,image/png" class="hidden"/>
+                    </form>
                     </p>
                 </div>
-                <div class="col-md-6"><img src="/static/img/1.jpg" class="img-responsive img-rounded"
-                                           alt="暂无封面"></div>
+                <div class="col-md-6">
+                    <img src="{{'/file/downloadPic/'+checkedNode.id+'?v='+picVersion}}" class="img-responsive img-rounded"
+                         ng-click="choosePic()"/></div>
             </div>
             <div class="row table-responsive" style="max-height: 600px;overflow:auto;">
                 <table class="table table-hover table-condensed">
@@ -130,14 +142,13 @@
         </div>
     </div>
     <!--tag添加/删除框-->
-    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="tagAddModalLabel" id="tagAddModal"
-         data-backdrop="static">
+    <div class="modal fade" tabindex="-1" role="dialog" id="tagAddModal" data-backdrop="static">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" ng-click="closeAdd()"><span
                             aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="tagAddModalLabel">标签操作</h4>
+                    <h4 class="modal-title">标签操作</h4>
                 </div>
                 <div class="modal-body">
                     <p> 所有标签，单击以添加 </p>
@@ -167,6 +178,38 @@
             </div>
         </div>
     </div>
+    <!--封面图片替换确认-->
+    <div class="modal fade" tabindex="-1" role="dialog" id="picUploadModal" data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" ng-click="closePicUpload()"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">图片操作确认</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-5">
+                            原图<img src="{{'/file/downloadPic/'+checkedNode.id+'?v='+picVersion}}" class="img-responsive img-rounded"
+                                   ng-click="choosePic()"/>
+                        </div>
+                        <div class="col-md-2">
+                        </div>
+                        <div class="col-md-5">
+                            新图
+                            <img class="img-responsive img-rounded" id="targetPic"/>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <span class="text-danger">该操作不可逆！</span>
+                    <button type="button" class="btn btn-danger" ng-click="submitPic()">确认替换</button>
+                    <button type="button" class="btn btn-default" ng-click="closePicUpload()">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!--播放器-->
     <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="videoModal"
          data-backdrop="static">
@@ -181,5 +224,23 @@
     <div class="alert alert-info" role="alert" id="videoAlert"
          style="position:absolute;top:50%;left:50%;height:50px;width:400px;margin-top:-100px;margin-left:-200px;display:none;z-index:10000;">
         按ESC退出播放器
+    </div>
+
+    <div class="modal fade" id="animationInfoModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">信息</h4>
+                </div>
+                <div class="modal-body">
+                    操作成功
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

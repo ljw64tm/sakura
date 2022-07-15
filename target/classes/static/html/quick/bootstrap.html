@@ -1,1 +1,60 @@
-bootstrap
+<style type="text/css">
+    textarea {
+        resize: none;
+    }
+</style>
+<div class="jumbotron">
+    <h3 class="text-primary">Bootstrap快速建站指引</h3>
+    <P>新手教程：<a href="https://v3.bootcss.com/" target="_blank">https://v3.bootcss.com/</a>
+    <P>
+</div>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">Step1：复制CSS&JS框架</h3>
+    </div>
+    <div class="panel-body">
+        <form>
+            <div class="form-group">
+                <label for="coreCSS2">CSS部分</label>
+                <textarea class="form-control" rows="5" id="coreCSS2" readonly></textarea>
+            </div>
+            <div class="form-group">
+                <label for="coreJS2">JS部分</label>
+                <textarea class="form-control" rows="5" id="coreJS2" readonly></textarea>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">Step2：导入</h3>
+    </div>
+    <div class="panel-body">
+        <p>
+            &lt;link rel="stylesheet" href="css/bootstrap.min.css"&gt;<br>
+            &lt;script src="js/bootstrap.js"&gt;&lt;/script&gt;<br>
+        </p>
+        <p>
+            导入CSS&JS并修改成正确的路径。<br>
+            <span class="text-danger">注意：导入Bootstrap之前必须要先导入Jquery</span>
+        </p>
+    </div>
+</div>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">Step3：初始化并开始你的表演</h3>
+    </div>
+    <div class="panel-body">
+        <P><strong> 无需初始化，直接表演即可！</strong></p>
+    </div>
+</div>
+<script>
+    $(function () {
+        $.get("css/bootstrap.min.css", function (data) {
+            $("#coreCSS2").val(data);
+        });
+        $.get("js/bootstrap.js", function (data) {
+            $("#coreJS2").val(data);
+        });
+    });
+</script>

@@ -1,1 +1,37 @@
-mysql
+<div class="jumbotron">
+    <h3 class="text-primary">Mysql快速建站指引</h3>
+</div>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">Step1：maven配置</h3>
+    </div>
+    <div class="panel-body">
+        <p>
+            &lt;dependency&gt;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;mysql&lt;/groupId&gt;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;mysql-connector-java &lt;/artifactId&gt;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;8.0.19 &lt;/version&gt;<br>
+            &lt;/dependency&lt;<br>
+        </p>
+    </div>
+</div>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">Step2：配置</h3>
+    </div>
+    <div class="panel-body">
+        <p class="bg-success">
+            以使用SpringBoot为基础，配置在application.yml为例<br>
+        </p>
+        <p>
+            spring:<br>
+            &nbsp;&nbsp;datasource:<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;driver-class-name: com.mysql.cj.jdbc.Driver<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;url:
+            jdbc:mysql://localhost:3306/sakura?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8&useSSL=false
+            #数据库连接，端口号后为数据库名称<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;username: root #数据库用户名<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;password: 123456 #数据库密码<br>
+        </p>
+    </div>
+</div>

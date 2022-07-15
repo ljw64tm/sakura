@@ -257,6 +257,78 @@
                         $('#maintainModal').modal('show')
                     });
                 };
+            }).controller('navbarCtrl', function ($scope, $http) {
+                //登录状态
+                $scope.loginStatus = false;
+                $scope.loginUser = null;
+                //登录表单
+                $scope.loginForm = {};
+                //注册表单
+                $scope.registerForm = {};
+                //打开注册
+                $scope.showRegister = function () {
+                    $('#registerModel').modal('show');
+                };
+                //打开登录
+                $scope.showLogin = function () {
+                    $('#loginModal').modal('show');
+                };
+                //注册
+                $scope.register = function () {
+                    if ($scope.registerForm.password != $scope.registerForm.password2) {
+                        $scope.registerForm.errMsg = "两次输入的密码不一致！";
+                        return;
+                    }
+                    $http.post('/user/register', $scope.registerForm).then(function (data) {
+                        if (data.data.success) {
+                            $scope.registerForm.errMsg = null;
+                            $('#registerModel').modal('hide');
+                            $('#registerSuccessModel').modal('show');
+                        } else {
+                            $scope.registerForm.errMsg = data.data.message;
+                        }
+                    }, function (data) {
+                        $scope.registerForm.errMsg = "注册失败，服务器侧故障......";
+                    });
+                };
+                //登录
+                $scope.login = function () {
+                    $http.post('/user/login', $scope.loginForm).then(function (data) {
+                        if (data.data.success) {
+                            $('#loginModal').modal('hide');
+                            $scope.loginCheck();
+                        } else {
+                            $scope.loginForm.errMsg = data.data.message;
+                        }
+                    }, function (data) {
+                        alert("登录失败，服务器侧故障......");
+                    });
+                };
+                //退出
+                $scope.logout = function () {
+                    $http.post('/user/logout', {}).then(function (data) {
+                        if (data.data.success) {
+                            $scope.loginCheck();
+                        }
+                    }, function (data) {
+                        alert("退出失败，服务器侧故障......");
+                    });
+                };
+                //登录状态检查
+                $scope.loginCheck = function () {
+                    $http.get('/user/loginCheck').then(function (data) {
+                        if (data.data.success) {
+                            if (data.data.data != null) {
+                                $scope.loginStatus = true;
+                                $scope.loginUser = data.data.data;
+                            } else {
+                                $scope.loginStatus = false;
+                                $scope.loginUser = null;
+                            }
+                        }
+                    });
+                };
+                $scope.loginCheck();
             }).config(function ($routeProvider) {
                 $routeProvider.when('/home', {
                     templateUrl: 'html/home.html',
@@ -306,58 +378,168 @@
                 }).when('/quick_idea', {
                     templateUrl: 'html/quick/idea.html',
                     controller: 'animationCtrl'
-                }).otherwise({
-                    redirectTo: '/home'
                 });
             });
         </script>
     </head>
     <body ng-app="myApp">
-        <nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                            data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand active" href="#!/home">首页</a>
+        <div ng-controller="navbarCtrl">
+            <nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                                data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand active" href="#!/home">首页</a>
+                    </div>
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav">
+                            <li><a href="#!/animation">找资源<span class="sr-only">(current)</span></a></li>
+                            <li><a href="#!/maintain">内部功能</a></li>
+                            <li class="dropdown">
+                                <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                                   aria-haspopup="true" aria-expanded="false">快速建站<span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#!/quick_angular">Angular</a></li>
+                                    <li><a href="#!/quick_jquery">Jquery</a></li>
+                                    <li><a href="#!/quick_bootstrap">Bootstrap</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="#!/quick_java">Java</a></li>
+                                    <li><a href="#!/quick_spring">Spring</a></li>
+                                    <li><a href="#!/quick_spring_mvc">Spring-MVC</a></li>
+                                    <li><a href="#!/quick_spring_boot">Spring-Boot</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="#!/quick_mysql">Mysql</a></li>
+                                    <li><a href="#!/quick_redis">Redis</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="#!/quick_eureka">Eureka</a></li>
+                                    <li><a href="#!/quick_zookeeper">Zookeeper</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="#!/quick_idea">Idea</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="#!/support">支持</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="" ng-click="showRegister()" ng-if="!loginStatus">注册</a></li>
+                            <li><a href="" ng-click="showLogin()" ng-if="!loginStatus">登录</a></li>
+                            <li class="dropdown">
+                                <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                                   aria-haspopup="true" aria-expanded="false" ng-click=""
+                                   ng-if="loginStatus">欢迎您！{{loginUser.nickName}}<span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="" ng-click="logout()">退出</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                    <ul class="nav navbar-nav">
-                        <li><a href="#!/animation">找资源<span class="sr-only">(current)</span></a></li>
-                        <li><a href="#!/maintain">内部功能</a></li>
-                        <li class="dropdown">
-                            <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                               aria-haspopup="true" aria-expanded="false">快速建站<span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#!/quick_angular">Angular</a></li>
-                                <li><a href="#!/quick_jquery">Jquery</a></li>
-                                <li><a href="#!/quick_bootstrap">Bootstrap</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="#!/quick_java">Java</a></li>
-                                <li><a href="#!/quick_spring">Spring</a></li>
-                                <li><a href="#!/quick_spring_mvc">Spring-MVC</a></li>
-                                <li><a href="#!/quick_spring_boot">Spring-Boot</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="#!/quick_mysql">Mysql</a></li>
-                                <li><a href="#!/quick_redis">Redis</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="#!/quick_eureka">Eureka</a></li>
-                                <li><a href="#!/quick_zookeeper">Zookeeper</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="#!/quick_idea">Idea</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a href="#!/support">支持</a></li>
-                    </ul>
+            </nav>
+            <div class="modal fade" id="registerModel" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title">注册</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul>
+                                        <li>本网站目前需要邀请码才可注册</li>
+                                        <li>本网站正在开发中，不保证不会炸库，造成账户丢失</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="loginNameInput">账户名</label>
+                                            <input type="text" class="form-control" id="loginNameInput"
+                                                   placeholder="LoginName" ng-model="registerForm.loginName"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="passwordInput">密码</label>
+                                            <input type="password" class="form-control" id="passwordInput"
+                                                   placeholder="Password" ng-model="registerForm.password"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="passwordInput2">再次输入密码</label>
+                                            <input type="password" class="form-control" id="passwordInput2"
+                                                   placeholder="Password-Repeat" ng-model="registerForm.password2"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="nickNameInput">昵称</label>
+                                            <input type="text" class="form-control" id="nickNameInput"
+                                                   placeholder="NickName" ng-model="registerForm.nickName"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="invitationCodeInput">邀请码</label>
+                                            <input type="text" class="form-control" id="invitationCodeInput"
+                                                   placeholder="XXXXX-XXXXX-XXXXX-XXXXX-XXXXX"
+                                                   ng-model="registerForm.invitationCode"/>
+                                        </div>
+                                        <P class="text-danger"><strong>{{registerForm.errMsg}}</strong></P>
+                                        <button type="submit" class="btn btn-primary btn-block" ng-click="register()">
+                                            注册
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </nav>
+            <div class="modal fade" id="loginModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-sm" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title">登录</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="form-group">
+                                    <label for="loginNameInput2">账户名</label>
+                                    <input type="text" class="form-control" id="loginNameInput2"
+                                           placeholder="LoginName" ng-model="loginForm.loginName">
+                                </div>
+                                <div class="form-group">
+                                    <label for="passwordInput3">密码</label>
+                                    <input type="password" class="form-control" id="passwordInput3"
+                                           placeholder="Password" ng-model="loginForm.password">
+                                </div>
+                                <P class="text-danger"><strong>{{loginForm.errMsg}}</strong></P>
+                                <button type="submit" class="btn btn-primary btn-block" ng-click="login()">登录</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="registerSuccessModel" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-sm" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title">提示</h4>
+                        </div>
+                        <div class="modal-body">
+                            恭喜您，您已经成功注册此站！快去登录吧~~
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div ng-view="" class="container-fluid">
         </div>
     </body>

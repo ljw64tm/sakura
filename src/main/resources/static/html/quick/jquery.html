@@ -1,1 +1,58 @@
-jquery
+<style type="text/css">
+    textarea {
+        resize: none;
+    }
+</style>
+<div class="jumbotron">
+    <h3 class="text-primary">Jquery快速建站指引</h3>
+    <P>新手教程：<a href="https://www.runoob.com/jquery/" target="_blank">https://www.runoob.com/jquery/</a>
+    <P>
+</div>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">Step1：复制JS框架</h3>
+    </div>
+    <div class="panel-body">
+        <form>
+            <div class="form-group">
+                <label for="coreJS">核心JS</label>
+                <textarea class="form-control" rows="5" id="coreJS" readonly></textarea>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">Step2：导入</h3>
+    </div>
+    <div class="panel-body">
+        <p>
+            &lt;script src="js/jquery.js"&gt;&lt;/script&gt;<br>
+        </p>
+        <p>
+            导入JS并修改成正确的路径。
+        </p>
+    </div>
+</div>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">Step3：初始化并开始你的表演</h3>
+    </div>
+    <div class="panel-body">
+        <P><strong> 固定初始化写法 JS部分：</strong></p>
+        <P>
+            &lt;script&gt;<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;$(function () {<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//这里开始你的表演...<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;});<br/>
+            &lt;/script&gt;<br/>
+        </p>
+    </div>
+</div>
+<script>
+    $(function () {
+        $.get("js/jquery.js", function (data) {
+            $("#coreJS").val(data);
+        });
+    });
+</script>

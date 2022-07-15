@@ -1,7 +1,14 @@
+<style type="text/css">
+    textarea {
+        resize: none;
+    }
+</style>
 <div class="jumbotron">
-    <h3>Angular快速建站指引</h3>
+    <h3 class="text-primary">Angular快速建站指引</h3>
+    <P>新手教程：<a href="https://www.runoob.com/angularjs/" target="_blank">https://www.runoob.com/angularjs/</a>
+    <P>
 </div>
-<div class="panel panel-primary">
+<div class="panel panel-info">
     <div class="panel-heading">
         <h3 class="panel-title">Step1：复制JS框架</h3>
     </div>
@@ -18,12 +25,48 @@
         </form>
     </div>
 </div>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">Step2：导入</h3>
+    </div>
+    <div class="panel-body">
+        <p>
+            &lt;script src="js/angular.min.js"&gt;&lt;/script&gt;<br>
+            &lt;script src="js/angular-route.min.js"&gt;&lt;/script&gt;<br>
+        </p>
+        <p>
+            导入两个JS并修改成正确的路径，不使用Angular路由功能可以不导入第二个。
+        </p>
+    </div>
+</div>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">Step3：初始化并开始你的表演</h3>
+    </div>
+    <div class="panel-body">
+        <P><strong> 固定初始化写法 JS部分：</strong></p>
+        <P>
+            &lt;script&gt;<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;angular.module('<code>应用名称</code>', ['ngRoute']).controller('<code>控制器名称</code>',
+            function ($scope, $http) {<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//这里开始你的表演...<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;});<br/>
+            &lt;/script&gt;<br/>
+        </p>
+        <P><strong>固定初始化写法 HTML部分：</strong></p>
+        <P>
+            &lt;div ng-app="<code>应用名称</code>" ng-controller="<code>控制器名称</code>"&gt;<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- Angular作用范围--&gt;<br/>
+            &lt;/div&gt;<br/>
+        </P>
+    </div>
+</div>
 <script>
     $(function () {
-        $.get("js/angular.min.js", function (data, status) {
+        $.get("js/angular.min.js", function (data) {
             $("#coreJS").val(data);
         });
-        $.get("js/angular-route.min.js", function (data, status) {
+        $.get("js/angular-route.min.js", function (data) {
             $("#routeJS").val(data);
         });
     });

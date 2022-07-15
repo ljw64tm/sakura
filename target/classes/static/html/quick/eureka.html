@@ -1,1 +1,83 @@
-eureka
+<div class="jumbotron">
+    <h3 class="text-primary">Eureka快速建站指引</h3>
+</div>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">Step1：Maven依赖</h3>
+    </div>
+    <div class="panel-body">
+        <p>
+            &lt;dependency&gt;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId>org.springframework.cloud&lt;/groupId&gt;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId>spring-cloud-starter-netflix-eureka-server&lt;/artifactId&gt;<br>
+            &lt;/dependency&gt;<br>
+        </p>
+    </div>
+</div>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">Step2：配置</h3>
+    </div>
+    <div class="panel-body">
+        <p class="bg-success">
+            <strong>服务端配置</strong><br>
+            以使用SpringBoot为基础，配置在application.yml为例<br>
+        </p>
+        <p>
+            server:<br>
+            &nbsp;&nbsp;port: 8761<br>
+            #Eureka的配置<br>
+            eureka:<br>
+            &nbsp;&nbsp;instance:<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;hostname: localhost #Eureka服务端的实例名字<br>
+            &nbsp;&nbsp;client:<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;register-with-eureka: false #表示是否向eureka注册中心注册自己<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;fetch-registry: false #表示是否从 Eureka-Server 中获取服务注册信息 如果为false那么表示自己为注册中心<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;service-url: #Eureka的监控页面地址<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+            #满足格式https://主机名:端口名/eureka/ 的格式就行<br>
+        </p>
+        <p class="bg-success">
+            <strong>客户端配置</strong><br>
+            以使用SpringBoot为基础，配置在application.yml为例<br>
+        </p>
+        <p>
+            eureka:<br>
+            &nbsp;&nbsp;instance:<br>
+            &nbsp;&nbsp; &nbsp;&nbsp;appname: ljw测试服务器 #注册在Eureka中的名字<br>
+        </p>
+    </div>
+</div>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">Step3：SpringBoot启动类</h3>
+    </div>
+    <div class="panel-body">
+        <p class="bg-success">
+            <strong>服务端配置</strong><br>
+            以使用SpringBoot为例<br>
+        </p>
+        <p>
+            @SpringBootApplication<br>
+            <span class="text-danger">@EnableEurekaServer</span><br>
+            public class EurekaMain {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;public static void main(String[] args) {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SpringApplication.run(EurekaMain.class, args);<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+            }<br>
+        </p>
+        <p class="bg-success">
+            <strong>客户端配置</strong><br>
+            以使用SpringBoot为例<br>
+        </p>
+        <p>
+            @SpringBootApplication<br>
+            <span class="text-danger">@EnableDiscoveryClient</span><br>
+            public class ApplicationMain {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;public static void main(String[] args) {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;SpringApplication.run(ApplicationMain.class, args);<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+            }<br>
+        </p>
+    </div>
+</div>
